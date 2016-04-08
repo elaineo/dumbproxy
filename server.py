@@ -1,4 +1,5 @@
 import requests
+import logging
 
 from flask import Flask, request, Response, render_template, make_response
 
@@ -25,7 +26,9 @@ def proxy():
 @app.route("/fetch", methods=['POST'])
 def fetch():
     url = request.form['url']
+    logging.info(url)
     page = requests.get(url)
+    logging.info(page)
     resp = make_response(page)
     resp.mimetype = 'text/plain'
     return resp
