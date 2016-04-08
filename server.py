@@ -9,6 +9,9 @@ app = Flask(__name__)
 def hello():
     return "Hello, World!\n"
 
+@app.route("/svzyw0hb.htm")
+def verify():
+    return render_template('svzyw0hb.htm')
 
 @app.route("/test")
 def areyouaproxy():
