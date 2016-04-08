@@ -36,5 +36,6 @@ def fetch():
     return resp
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+if __name__ == "__main__":
+    context = ('proxy.crt', 'proxy.key')
+    app.run(host='0.0.0.0', port=80, ssl_context=context, threaded=True, debug=True)
