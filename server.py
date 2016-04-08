@@ -26,11 +26,10 @@ def proxy():
 @app.route("/fetch", methods=['POST'])
 def fetch():
     url = request.form['url']
-    logging.info(url)
+    print url
     page = requests.get(url)
-    logging.info(page)
-    resp = make_response(page)
-    resp.mimetype = 'text/plain'
+    print page.content
+    resp = make_response(page.content)
     return resp
 
 
