@@ -1,6 +1,6 @@
 import requests
 
-from flask import Flask, request, Response, render_template
+from flask import Flask, request, Response, render_template, make_response
 
 app = Flask(__name__)
 
@@ -24,8 +24,12 @@ def proxy():
 # fetch a web page and render it
 @app.route("/fetch", methods=['POST'])
 def fetch():
-    url = request.args.get('key', '')
+    url = request.form['url']
+    page = requests.get(url)
+    resp = make_response(page)
+    resp.mimetype = 'text/plain'
+    return resp
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=80)
