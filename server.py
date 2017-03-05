@@ -1,7 +1,7 @@
 import requests
-import logging
 
 from flask import Flask, request, Response, render_template, make_response
+from werkzeug.datastructures import Headers
 
 app = Flask(__name__)
 
@@ -30,10 +30,37 @@ def proxy():
 def fetch():
     url = request.form['url']
     print url
-    page = requests.get(url)
-    print page.content
-    resp = make_response(page.content)
-    return resp
+    try:
+        h = Headers(request.headers)
+        h.clear()
+        h.add('referer', 'https://www.facebook.com/')
+
+        r = requests.request(
+            method='GET',
+            url=url,
+            headers=h,
+            timeout=5
+        )
+    except (
+            requests.exceptions.Timeout,
+            requests.exceptions.ConnectTimeout,
+            requests.exceptions.ReadTimeout):
+        return Response(status=504)
+    except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.HTTPError,
+            requests.exceptions.TooManyRedirects):
+        return Response(status=502)
+    except (
+            requests.exceptions.RequestException,
+            Exception) as e:
+        if app.debug:
+            raise e
+        return Response(status=500)
+
+    mimetype = "text/html"
+    return Response(r.content, mimetype=mimetype)
+
 
 
 if __name__ == "__main__":
